@@ -1,0 +1,20 @@
+# Ignore uploads (user files)
+uploads/
+
+# Ignore environment files
+.env
+config/mail.local.php
+
+# Ignore sensitive config files
+config/db.php
+config/stripe.php
+config/mail.php
+
+# Ignore vendor directory (reinstall with composer install)
+vendor/
+
+# Ignore OS files
+.DS_Store
+
+# Ignore logs
+*.log

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolShare Project Presentation</title>
+    <style>
+        :root {
+            --navy: #15324a;
+            --teal: #1f6f78;
+            --green: #2f7d59;
+            --yellow: #f2c94c;
+            --ink: #172334;
+            --muted: #627083;
+            --line: #dbe4ee;
+            --soft: #f6f8fb;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--soft);
+            font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
+        }
+
+        .deck {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 48px 56px;
+            background: var(--white);
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: grid;
+        }
+
+        .slide-shell {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 28px;
+        }
+
+        .eyebrow {
+            color: var(--teal);
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0;
+            margin-bottom: 12px;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin: 0;
+        }
+
+        h1 {
+            color: var(--navy);
+            font-size: 56px;
+            line-height: 1.04;
+            max-width: 900px;
+        }
+
+        h2 {
+            color: var(--navy);
+            font-size: 42px;
+            line-height: 1.12;
+        }
+
+        h3 {
+            color: var(--navy);
+            font-size: 22px;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .lead {
+            color: var(--muted);
+            font-size: 24px;
+            line-height: 1.45;
+            max-width: 840px;
+            margin-top: 18px;
+        }
+
+        .topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            color: var(--navy);
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .slide-count {
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+            gap: 36px;
+            align-items: center;
+        }
+
+        .hero-photos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 210px 210px;
+            gap: 14px;
+        }
+
+        .hero-photos img,
+        .feature-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+        }
+
+        .hero-photos img:first-child {
+            grid-row: span 2;
+        }
+
+        .tag-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 26px;
+        }
+
+        .tag {
+            border: 1px solid var(--line);
+            background: var(--soft);
+            color: var(--ink);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            align-content: center;
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 24px;
+            background: var(--white);
+            min-height: 205px;
+        }
+
+        .card strong {
+            display: block;
+            color: var(--navy);
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .card p,
+        li {
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.45;
+        }
+
+        .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            color: var(--white);
+            background: var(--teal);
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 18px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: 36px;
+            align-items: center;
+        }
+
+        .feature-image {
+            height: 450px;
+        }
+
+        .steps {
+            display: grid;
+            gap: 14px;
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            gap: 16px;
+            align-items: start;
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--soft);
+        }
+
+        .step-num {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: var(--navy);
+            color: var(--white);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .step p {
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+
+        .flow {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .flow-item {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 18px 14px;
+            background: var(--white);
+            min-height: 140px;
+            position: relative;
+        }
+
+        .flow-item::after {
+            content: "";
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            width: 18px;
+            height: 2px;
+            background: var(--teal);
+        }
+
+        .flow-item:last-child::after {
+            display: none;
+        }
+
+        .flow-item strong {
+            display: block;
+            color: var(--navy);
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .flow-item span {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.35;
+        }
+
+        .architecture {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .arch-box {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 22px;
+            min-height: 135px;
+            background: var(--soft);
+        }
+
+        .arch-box h3 {
+            font-size: 20px;
+        }
+
+        .arch-box p {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+            align-content: center;
+        }
+
+        .mini-card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 20px 16px;
+            min-height: 210px;
+            background: var(--white);
+        }
+
+        .mini-card .icon {
+            width: 38px;
+            height: 38px;
+            font-size: 18px;
+            margin-bottom: 14px;
+        }
+
+        .mini-card strong {
+            display: block;
+            color: var(--navy);
+            font-size: 17px;
+            margin-bottom: 9px;
+        }
+
+        .mini-card p {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .challenge-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .challenge {
+            border-left: 6px solid var(--yellow);
+            background: var(--soft);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 140px;
+        }
+
+        .challenge:nth-child(even) {
+            border-left-color: var(--green);
+        }
+
+        .challenge strong {
+            display: block;
+            color: var(--navy);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .challenge p {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .roadmap .card {
+            min-height: 330px;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 12px 0 0;
+        }
+
+        li + li {
+            margin-top: 10px;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font-size: 13px;
+            border-top: 1px solid var(--line);
+            padding-top: 14px;
+        }
+
+        .controls {
+            position: fixed;
+            right: 22px;
+            bottom: 18px;
+            display: flex;
+            gap: 8px;
+            z-index: 50;
+        }
+
+        button {
+            border: 1px solid var(--line);
+            background: var(--white);
+            color: var(--navy);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .speaker-note {
+            display: none;
+            margin-top: 18px;
+            border: 1px dashed var(--line);
+            border-radius: 8px;
+            padding: 14px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.45;
+            background: #fbfcfe;
+        }
+
+        body.show-notes .speaker-note {
+            display: block;
+        }
+
+        @media (max-width: 920px) {
+            body {
+                overflow: auto;
+            }
+
+            .deck {
+                height: auto;
+            }
+
+            .slide {
+                min-height: 100vh;
+                padding: 28px 20px;
+            }
+
+            .hero-grid,
+            .two-col,
+            .content-grid,
+            .feature-grid,
+            .challenge-list,
+            .roadmap,
+            .architecture,
+            .flow {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 42px;
+            }
+
+            h2 {
+                font-size: 34px;
+            }
+
+            .hero-photos {
+                grid-template-rows: 160px 160px;
+            }
+
+            .feature-image {
+                height: 260px;
+            }
+
+            .flow-item::after {
+                display: none;
+            }
+        }
+
+        @media print {
+            body {
+                overflow: visible;
+                background: var(--white);
+            }
+
+            .deck {
+                height: auto;
+            }
+
+            .slide {
+                display: grid;
+                page-break-after: always;
+                height: 100vh;
+            }
+
+            .controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="deck" aria-label="ToolShare presentation slides">
+    <section class="slide active">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">01 / 10</div>
+            </div>
+            <div class="hero-grid">
+                <div>
+                    <div class="eyebrow">Final Project Presentation</div>
+                    <h1>Rent tools locally. Save money. Help owners earn.</h1>
+                    <p class="lead">ToolShare is a web marketplace where renters can find tools, owners can list unused equipment, and admins can manage bookings, payments, returns, and disputes.</p>
+                    <div class="tag-row">
+                        <span class="tag">PHP</span>
+                        <span class="tag">MySQL</span>
+                        <span class="tag">PHPMailer</span>
+                        <span class="tag">Payments</span>
+                        <span class="tag">Admin Dashboard</span>
+                    </div>
+                    <div class="speaker-note">Opening line: Imagine needing a drill or cement mixer for one day. Buying it is expensive, but someone nearby may already own it. ToolShare connects both sides.</div>
+                </div>
+                <div class="hero-photos" aria-label="Tool photos">
+                    <img src="../uploads/1770745783_1770664074_drill.jpg" alt="Power drill">
+                    <img src="../uploads/1774455051_ladder.jpg" alt="Ladder">
+                    <img src="../uploads/1774540540_yardmax%20cement%20mixer.webp" alt="Cement mixer">
+                </div>
+            </div>
+            <div class="footer">
+                <span>Project demo deck</span>
+                <span>Use arrow keys to navigate</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">02 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">The Problem</div>
+                <h2>Tools are useful, but ownership is often inefficient.</h2>
+                <p class="lead">Many people need tools for short projects, while many owners have valuable tools sitting idle.</p>
+            </div>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="icon">$</div>
+                    <strong>High cost for occasional use</strong>
+                    <p>Buying a tool for a single task can be wasteful, especially for students, renters, and homeowners doing small projects.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">T</div>
+                    <strong>Unused owner inventory</strong>
+                    <p>Owners often have drills, ladders, lawn tools, and mixers that are useful but rarely used every week.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">!</div>
+                    <strong>Trust is hard to manage</strong>
+                    <p>Local rentals need booking rules, payment tracking, return confirmation, reviews, and dispute handling.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <span>Problem framing</span>
+                <span>Cost, waste, trust</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">03 / 10</div>
+            </div>
+            <div class="two-col">
+                <div>
+                    <div class="eyebrow">The Solution</div>
+                    <h2>A complete rental marketplace for tools.</h2>
+                    <p class="lead">ToolShare supports the full journey: browsing, booking, payment, pickup, active rental, return, review, and admin support.</p>
+                    <div class="speaker-note">Say: This is not only a listing page. The project covers the operational flow that a rental marketplace needs.</div>
+                </div>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div><h3>Renters browse and book</h3><p>Users search tools, view details, request rentals, and track active bookings.</p></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div><h3>Owners list and earn</h3><p>Owners add tools, manage requests, monitor returns, and view earnings.</p></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div><h3>Admins keep the platform safe</h3><p>Admins handle users, bookings, disputes, deposits, reports, and support.</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <span>Product overview</span>
+                <span>Renter + owner + admin</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">04 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">User Roles</div>
+                <h2>Each role has a clear job in the platform.</h2>
+            </div>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="icon">R</div>
+                    <strong>Renter</strong>
+                    <ul>
+                        <li>Sign up and verify email</li>
+                        <li>Browse tools and request rentals</li>
+                        <li>Pay, track rentals, return tools</li>
+                        <li>Leave reviews or raise disputes</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">O</div>
+                    <strong>Owner</strong>
+                    <ul>
+                        <li>Add and edit tool listings</li>
+                        <li>Monitor booking activity</li>
+                        <li>Manage return flow</li>
+                        <li>View earnings and receipts</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">A</div>
+                    <strong>Admin</strong>
+                    <ul>
+                        <li>Manage users and listings</li>
+                        <li>Track bookings and deposits</li>
+                        <li>Resolve disputes</li>
+                        <li>Review reports and support tickets</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+                <span>System scope</span>
+                <span>Three dashboards, one marketplace</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">05 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">Live Demo Plan</div>
+                <h2>A smooth 7 to 10 minute demo path.</h2>
+                <p class="lead">Use one rental story from browsing to admin review. Keep email as a prepared screenshot so the live demo stays reliable.</p>
+            </div>
+            <div class="steps">
+                <div class="step"><div class="step-num">1</div><div><h3>Start with login and browse</h3><p>Explain signup, email verification, and the marketplace search experience.</p></div></div>
+                <div class="step"><div class="step-num">2</div><div><h3>Open a tool and book it</h3><p>Show tool details, dates, pricing, and reservation creation.</p></div></div>
+                <div class="step"><div class="step-num">3</div><div><h3>Switch between dashboards</h3><p>Show renter tracking, owner operations, and admin monitoring.</p></div></div>
+                <div class="step"><div class="step-num">4</div><div><h3>Close with trust features</h3><p>Show receipts, reviews, dispute handling, support, and admin reports.</p></div></div>
+            </div>
+            <div class="footer">
+                <span>Demo strategy</span>
+                <span>A story beats random clicking</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">06 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">Key Features</div>
+                <h2>The project covers real marketplace operations.</h2>
+            </div>
+            <div class="feature-grid">
+                <div class="mini-card"><div class="icon">S</div><strong>Signup and security</strong><p>Email verification, password reset, account status, and role-aware login.</p></div>
+                <div class="mini-card"><div class="icon">M</div><strong>Marketplace</strong><p>Tool listings, browsing, details, owner edits, and user-friendly rental discovery.</p></div>
+                <div class="mini-card"><div class="icon">B</div><strong>Bookings</strong><p>Reservation requests, pickup and drop-off timing, active rentals, and return handling.</p></div>
+                <div class="mini-card"><div class="icon">P</div><strong>Payments</strong><p>Checkout flow, deposits, receipts, owner earnings, and admin revenue tracking.</p></div>
+                <div class="mini-card"><div class="icon">T</div><strong>Trust</strong><p>Reviews, disputes, support chat, admin moderation, and operational oversight.</p></div>
+            </div>
+            <div class="footer">
+                <span>Feature summary</span>
+                <span>Built beyond basic CRUD</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">07 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">Technical Architecture</div>
+                <h2>Simple, practical PHP architecture.</h2>
+                <p class="lead">The project uses page controllers, helper files, shared chrome, MySQL storage, SMTP email, and payment helper logic.</p>
+            </div>
+            <div class="architecture">
+                <div class="arch-box"><h3>Browser UI</h3><p>PHP-rendered pages for renter, owner, and admin experiences with shared navigation and styling.</p></div>
+                <div class="arch-box"><h3>PHP application layer</h3><p>Auth helpers, booking helpers, mail helpers, payment helpers, dispute helpers, and admin helpers.</p></div>
+                <div class="arch-box"><h3>MySQL database</h3><p>Users, tools, bookings, reviews, disputes, payments, earnings, notifications, and support data.</p></div>
+                <div class="arch-box"><h3>PHPMailer SMTP</h3><p>Email verification and password reset messages are sent through Gmail SMTP configuration.</p></div>
+                <div class="arch-box"><h3>Payment logic</h3><p>Checkout, deposits, renter receipts, owner statements, and admin revenue views support the marketplace.</p></div>
+                <div class="arch-box"><h3>Admin operations</h3><p>Dashboards summarize users, listings, bookings, disputes, deposits, payouts, and reports.</p></div>
+            </div>
+            <div class="footer">
+                <span>Implementation</span>
+                <span>PHP + MySQL + PHPMailer + payments</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">08 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">Booking Lifecycle</div>
+                <h2>ToolShare follows the full rental journey.</h2>
+            </div>
+            <div class="flow">
+                <div class="flow-item"><strong>Request</strong><span>Renter selects tool, dates, and submits a reservation.</span></div>
+                <div class="flow-item"><strong>Payment</strong><span>Booking price, deposit, and checkout are handled.</span></div>
+                <div class="flow-item"><strong>Pickup</strong><span>Rental begins with pickup confirmation and active status.</span></div>
+                <div class="flow-item"><strong>Active</strong><span>Renter and owner monitor the rental period.</span></div>
+                <div class="flow-item"><strong>Return</strong><span>Tool return, deposit handling, and receipts are recorded.</span></div>
+                <div class="flow-item"><strong>Review or dispute</strong><span>Users can review the rental or raise a problem for admin review.</span></div>
+            </div>
+            <div class="two-col">
+                <div>
+                    <h3>Why this matters</h3>
+                    <p class="lead">The lifecycle makes the app feel like a real rental system, not just a list of tools.</p>
+                </div>
+                <div class="feature-image">
+                    <img src="../uploads/1774540555_honda%20lawn%20mover.avif" alt="Lawn mower listing visual">
+                </div>
+            </div>
+            <div class="footer">
+                <span>Business flow</span>
+                <span>Request to resolution</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">09 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">Challenges And Fixes</div>
+                <h2>What I learned while building and hosting it.</h2>
+            </div>
+            <div class="challenge-list">
+                <div class="challenge"><strong>Email delivery after hosting</strong><p>SMTP required correct Gmail app password, sender settings, From versus To checks, and hosted reset links.</p></div>
+                <div class="challenge"><strong>Role-based access</strong><p>Renter, owner, and admin pages needed correct redirects, permissions, and dashboard behavior.</p></div>
+                <div class="challenge"><strong>Booking state management</strong><p>Requests, active rentals, returns, extensions, and disputes needed clear status rules.</p></div>
+                <div class="challenge"><strong>Admin operations</strong><p>The admin side needed summaries, filters, case review, and enough information to make decisions quickly.</p></div>
+            </div>
+            <div class="footer">
+                <span>Learning points</span>
+                <span>Debugging made the product stronger</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="slide-shell">
+            <div class="topline">
+                <div class="brand">TOOLSHARE</div>
+                <div class="slide-count">10 / 10</div>
+            </div>
+            <div>
+                <div class="eyebrow">Future Scope</div>
+                <h2>Where ToolShare can grow next.</h2>
+            </div>
+            <div class="roadmap">
+                <div class="card">
+                    <div class="icon">1</div>
+                    <strong>Short term</strong>
+                    <ul>
+                        <li>Use a dedicated sender email</li>
+                        <li>Improve HTTPS and domain trust</li>
+                        <li>Polish mobile responsiveness</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">2</div>
+                    <strong>Mid term</strong>
+                    <ul>
+                        <li>Map-based nearby tool search</li>
+                        <li>Real-time chat notifications</li>
+                        <li>Owner verification workflow</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">3</div>
+                    <strong>Long term</strong>
+                    <ul>
+                        <li>Mobile app experience</li>
+                        <li>Tool insurance and damage scoring</li>
+                        <li>Advanced admin analytics</li>
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <p class="lead">Final message: ToolShare turns unused tools into local rental opportunities with practical workflows for renters, owners, and admins.</p>
+            </div>
+            <div class="footer">
+                <span>Thank you</span>
+                <span>Ready for demo and questions</span>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="controls" aria-label="Presentation controls">
+    <button type="button" id="prevBtn">Prev</button>
+    <button type="button" id="notesBtn">Notes</button>
+    <button type="button" id="nextBtn">Next</button>
+</div>
+
+<script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const notesBtn = document.getElementById('notesBtn');
+    let current = 0;
+
+    function showSlide(index) {
+        current = Math.max(0, Math.min(index, slides.length - 1));
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === current);
+        });
+    }
+
+    prevBtn.addEventListener('click', () => showSlide(current - 1));
+    nextBtn.addEventListener('click', () => showSlide(current + 1));
+    notesBtn.addEventListener('click', () => document.body.classList.toggle('show-notes'));
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+            event.preventDefault();
+            showSlide(current + 1);
+        }
+
+        if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+            event.preventDefault();
+            showSlide(current - 1);
+        }
+
+        if (event.key.toLowerCase() === 'n') {
+            document.body.classList.toggle('show-notes');
+        }
+    });
+</script>
+</body>
+</html>

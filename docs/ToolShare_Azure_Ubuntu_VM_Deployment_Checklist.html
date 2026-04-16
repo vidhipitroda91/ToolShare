@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolShare Azure Ubuntu VM Deployment Checklist</title>
+    <style>
+        :root {
+            --ink: #17324d;
+            --muted: #5e7591;
+            --line: #d7e3ef;
+            --soft: #f4f8fc;
+            --accent: #1d7f7a;
+            --accent-soft: #e8f6f5;
+            --warn: #8b4f17;
+            --warn-soft: #fff3e5;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--ink);
+            background: #eef5fb;
+            line-height: 1.5;
+        }
+
+        .page {
+            max-width: 960px;
+            margin: 28px auto;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            padding: 36px 40px 44px;
+        }
+
+        h1, h2, h3 {
+            margin: 0 0 12px;
+            color: var(--ink);
+        }
+
+        h1 {
+            font-size: 34px;
+            line-height: 1.15;
+        }
+
+        h2 {
+            font-size: 23px;
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-top: 18px;
+        }
+
+        p, li {
+            font-size: 15px;
+        }
+
+        p.lead {
+            color: var(--muted);
+            font-size: 16px;
+            margin: 10px 0 0;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 24px 0 8px;
+        }
+
+        .meta-card,
+        .note,
+        .cost-box {
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 14px 16px;
+            background: var(--soft);
+        }
+
+        .meta-card strong,
+        .cost-box strong {
+            display: block;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .checklist {
+            margin: 12px 0 0 0;
+            padding-left: 24px;
+        }
+
+        .checklist li {
+            margin: 8px 0;
+        }
+
+        .checklist li::marker {
+            font-weight: 700;
+        }
+
+        .code {
+            margin: 10px 0 0;
+            padding: 14px 16px;
+            background: #0f2235;
+            color: #eef7ff;
+            border-radius: 14px;
+            font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .note {
+            margin-top: 12px;
+        }
+
+        .note strong {
+            color: var(--accent);
+        }
+
+        .warning {
+            background: var(--warn-soft);
+            border-color: #f2cfaa;
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 14px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid var(--line);
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: var(--soft);
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .page {
+                margin: 0;
+                border: none;
+                border-radius: 0;
+                padding: 0;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1>ToolShare Azure Ubuntu VM Deployment Checklist</h1>
+        <p class="lead">Fallback deployment plan for this project when Azure Database for MySQL Flexible Server is blocked by the Azure for Students subscription. This path runs the PHP app and MySQL on one Ubuntu VM.</p>
+
+        <div class="meta">
+            <div class="meta-card">
+                <strong>Recommended Path</strong>
+                Ubuntu VM + Apache + PHP + MySQL
+            </div>
+            <div class="meta-card">
+                <strong>Best For</strong>
+                Capstone demo with lowest platform risk
+            </div>
+            <div class="meta-card">
+                <strong>Project Fit</strong>
+                Matches current local XAMPP-style PHP/MySQL app
+            </div>
+        </div>
+
+        <h2>Cost Estimate</h2>
+        <p>These numbers are an estimate, not a quote. Azure’s pricing pages say VM and disk charges vary by region, agreement, and current pricing program. The ranges below are an inference for a small Linux VM plus a small managed disk, based on Azure’s official pricing pages and a demo-sized deployment.</p>
+
+        <div class="cost-grid">
+            <div class="cost-box">
+                <strong>Recommended Demo VM</strong>
+                <div><b>Size:</b> `Standard_B2s`</div>
+                <div><b>Disk:</b> Standard SSD 32 to 64 GiB</div>
+                <div><b>Estimated monthly:</b> about <b>$35 to $50</b></div>
+                <div><b>Estimated 2-day demo:</b> about <b>$2.50 to $4.50</b></div>
+            </div>
+            <div class="cost-box">
+                <strong>Cheapest Possible VM</strong>
+                <div><b>Size:</b> `Standard_B1s` if offered and stable enough</div>
+                <div><b>Disk:</b> Standard SSD 32 GiB</div>
+                <div><b>Estimated monthly:</b> about <b>$15 to $25</b></div>
+                <div><b>Estimated 2-day demo:</b> about <b>$1 to $2</b></div>
+            </div>
+        </div>
+
+        <div class="note warning">
+            <strong>Important:</strong> VM compute is the main cost. Storage, light outbound traffic, and a tiny public IP cost are small compared with the VM itself. Since you have Azure student credit, this approach should still stay well inside demo budget unless you leave the VM running for a long time.
+        </div>
+
+        <h2>What You Need Before Starting</h2>
+        <ol class="checklist">
+            <li>Azure student subscription with enough credit.</li>
+            <li>Your local project folder ready on your Mac.</li>
+            <li>Your local MySQL data ready to export with `mysqldump`.</li>
+            <li>Gmail SMTP app password ready for production email sending.</li>
+            <li>Stripe test keys and webhook secret ready.</li>
+        </ol>
+
+        <h2>Step 1: Create the Ubuntu VM</h2>
+        <ol class="checklist">
+            <li>Open Azure Portal.</li>
+            <li>Go to <b>Virtual machines</b> → <b>Create</b> → <b>Azure virtual machine</b>.</li>
+            <li>Set:
+                <ul>
+                    <li>Subscription: `Azure for Students`</li>
+                    <li>Resource group: create `toolshare-vm-rg`</li>
+                    <li>Virtual machine name: `toolshare-vm`</li>
+                    <li>Region: choose one Azure allows for your subscription</li>
+                    <li>Image: `Ubuntu Server 22.04 LTS`</li>
+                    <li>Size: `Standard_B2s` recommended</li>
+                    <li>Authentication type: `Password`</li>
+                    <li>Username: `azureuser`</li>
+                </ul>
+            </li>
+            <li>Open inbound ports:
+                <ul>
+                    <li>`SSH (22)`</li>
+                    <li>`HTTP (80)`</li>
+                    <li>`HTTPS (443)`</li>
+                </ul>
+            </li>
+            <li>Review and create the VM.</li>
+        </ol>
+
+        <h2>Step 2: Add a DNS Name</h2>
+        <ol class="checklist">
+            <li>Open the VM after creation.</li>
+            <li>Click the attached <b>Public IP address</b> resource.</li>
+            <li>Go to <b>Configuration</b>.</li>
+            <li>Set a DNS label, for example `toolsharevidhi`.</li>
+            <li>Save it. Your hostname will look like `toolsharevidhi.centralus.cloudapp.azure.com`.</li>
+        </ol>
+
+        <h2>Step 3: SSH Into the VM</h2>
+        <p>From your Mac terminal, run:</p>
+        <div class="code">ssh azureuser@toolsharevidhi.centralus.cloudapp.azure.com</div>
+
+        <h2>Step 4: Install the Runtime</h2>
+        <p>Run these commands on the VM:</p>
+        <div class="code">sudo apt update
+sudo apt -y install apache2 mysql-server unzip composer php php-cli libapache2-mod-php php-mysql php-curl php-mbstring php-xml php-zip php-gd php-intl
+sudo systemctl enable --now apache2
+sudo systemctl enable --now mysql</div>
+
+        <div class="note">
+            <strong>Project runtime match:</strong> this project already uses Stripe, Dompdf, PHPMailer, PDO MySQL, GD, XML, ZIP, cURL, and mbstring. The package list above covers that stack.
+        </div>
+
+        <h2>Step 5: Create the Database and DB User</h2>
+        <div class="code">sudo mysql -e "CREATE DATABASE tool_rental CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+sudo mysql -e "CREATE USER 'toolshareapp'@'localhost' IDENTIFIED BY 'YourStrongDbPasswordHere';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON tool_rental.* TO 'toolshareapp'@'localhost';"
+sudo mysql -e "FLUSH PRIVILEGES;"</div>
+
+        <h2>Step 6: Export the Local Database</h2>
+        <p>On your Mac, from the project environment, export your current local DB:</p>
+        <div class="code">mysqldump -u root -p tool_rental > tool_rental.sql</div>
+
+        <h2>Step 7: Create the Deployment ZIP</h2>
+        <p>On your Mac, from the project root:</p>
+        <div class="code">zip -r toolshare-vm.zip . -x "tool_rental.sql" "tmp/*" "uploads/*" "docs/*" ".env" "*.log" ".DS_Store"</div>
+
+        <div class="note warning">
+            <strong>Do not include:</strong> SQL dumps, temp files, docs, logs, or local-only secret files in the deployment ZIP.
+        </div>
+
+        <h2>Step 8: Upload the App and SQL Dump</h2>
+        <p>From your Mac:</p>
+        <div class="code">scp toolshare-vm.zip tool_rental.sql azureuser@toolsharevidhi.centralus.cloudapp.azure.com:~</div>
+
+        <h2>Step 9: Unpack the App on the VM</h2>
+        <div class="code">sudo mkdir -p /var/www/toolshare
+sudo unzip -o ~/toolshare-vm.zip -d /var/www/toolshare
+sudo mkdir -p /var/www/toolshare/uploads/disputes
+sudo mkdir -p /var/www/toolshare/tmp/dompdf
+sudo chown -R azureuser:www-data /var/www/toolshare
+sudo chown -R www-data:www-data /var/www/toolshare/uploads /var/www/toolshare/tmp
+sudo chmod -R 775 /var/www/toolshare/uploads /var/www/toolshare/tmp</div>
+
+        <h2>Step 10: Import the SQL Dump</h2>
+        <div class="code">mysql -u toolshareapp -p tool_rental &lt; ~/tool_rental.sql</div>
+
+        <h2>Step 11: Configure Apache</h2>
+        <p>Create a site config:</p>
+        <div class="code">sudo nano /etc/apache2/sites-available/toolshare.conf</div>
+
+        <p>Paste this template and replace the placeholders:</p>
+        <div class="code">&lt;VirtualHost *:80&gt;
+    ServerName toolsharevidhi.centralus.cloudapp.azure.com
+    DocumentRoot /var/www/toolshare
+
+    &lt;Directory /var/www/toolshare&gt;
+        AllowOverride All
+        Require all granted
+        DirectoryIndex index.php index.html
+    &lt;/Directory&gt;
+
+    SetEnv DB_HOST 127.0.0.1
+    SetEnv DB_PORT 3306
+    SetEnv DB_NAME tool_rental
+    SetEnv DB_USER toolshareapp
+    SetEnv DB_PASS YourStrongDbPasswordHere
+    SetEnv DB_CHARSET utf8mb4
+
+    SetEnv MAIL_ENABLED true
+    SetEnv MAIL_HOST smtp.gmail.com
+    SetEnv MAIL_PORT 587
+    SetEnv MAIL_SECURE tls
+    SetEnv MAIL_USERNAME yourgmail@gmail.com
+    SetEnv MAIL_PASSWORD your_16_character_google_app_password
+    SetEnv MAIL_FROM_EMAIL yourgmail@gmail.com
+    SetEnv MAIL_FROM_NAME ToolShare
+
+    SetEnv STRIPE_SECRET_KEY sk_test_xxx
+    SetEnv STRIPE_WEBHOOK_SECRET whsec_xxx
+    SetEnv APP_URL http://toolsharevidhi.centralus.cloudapp.azure.com
+    SetEnv TOOLSHARE_TMP_ROOT /var/www/toolshare/tmp
+
+    ErrorLog ${APACHE_LOG_DIR}/toolshare-error.log
+    CustomLog ${APACHE_LOG_DIR}/toolshare-access.log combined
+&lt;/VirtualHost&gt;</div>
+
+        <p>Enable the site:</p>
+        <div class="code">sudo a2enmod rewrite
+sudo a2dissite 000-default
+sudo a2ensite toolshare
+sudo systemctl reload apache2</div>
+
+        <h2>Step 12: Run Migrations and Deployment Checks</h2>
+        <p>In the same SSH session, export the same environment values once and run:</p>
+        <div class="code">export DB_HOST=127.0.0.1
+export DB_PORT=3306
+export DB_NAME=tool_rental
+export DB_USER=toolshareapp
+export DB_PASS='YourStrongDbPasswordHere'
+export DB_CHARSET=utf8mb4
+export MAIL_ENABLED=true
+export MAIL_HOST=smtp.gmail.com
+export MAIL_PORT=587
+export MAIL_SECURE=tls
+export MAIL_USERNAME='yourgmail@gmail.com'
+export MAIL_PASSWORD='your_16_character_google_app_password'
+export MAIL_FROM_EMAIL='yourgmail@gmail.com'
+export MAIL_FROM_NAME='ToolShare'
+export STRIPE_SECRET_KEY='sk_test_xxx'
+export STRIPE_WEBHOOK_SECRET='whsec_xxx'
+export APP_URL='http://toolsharevidhi.centralus.cloudapp.azure.com'
+export TOOLSHARE_TMP_ROOT='/var/www/toolshare/tmp'
+
+cd /var/www/toolshare
+php scripts/run_migrations.php
+php scripts/predeploy_check.php</div>
+
+        <h2>Step 13: Add HTTPS</h2>
+        <p>Stripe and email links should use HTTPS. Install Certbot:</p>
+        <div class="code">sudo apt -y install certbot python3-certbot-apache
+sudo certbot --apache -d toolsharevidhi.centralus.cloudapp.azure.com</div>
+
+        <p>After HTTPS is live, edit the Apache config and change:</p>
+        <div class="code">SetEnv APP_URL http://toolsharevidhi.centralus.cloudapp.azure.com</div>
+
+        <p>to:</p>
+        <div class="code">SetEnv APP_URL https://toolsharevidhi.centralus.cloudapp.azure.com</div>
+
+        <p>Then reload Apache:</p>
+        <div class="code">sudo systemctl reload apache2</div>
+
+        <h2>Step 14: Configure Stripe</h2>
+        <ol class="checklist">
+            <li>Use Stripe test mode.</li>
+            <li>Set your webhook endpoint to:
+                <div class="code">https://toolsharevidhi.centralus.cloudapp.azure.com/stripe_webhook.php</div>
+            </li>
+            <li>Copy the webhook secret into `STRIPE_WEBHOOK_SECRET`.</li>
+        </ol>
+
+        <h2>Step 15: Final Smoke Test</h2>
+        <ol class="checklist">
+            <li>Open the homepage.</li>
+            <li>Register a new user.</li>
+            <li>Verify email from your phone.</li>
+            <li>Run forgot password.</li>
+            <li>Log in.</li>
+            <li>Add a tool.</li>
+            <li>Create a booking request.</li>
+            <li>Approve the booking.</li>
+            <li>Complete Stripe checkout in test mode.</li>
+            <li>Open the receipt.</li>
+            <li>Send one chat message.</li>
+            <li>Create one support ticket.</li>
+            <li>Walk one dispute flow.</li>
+        </ol>
+
+        <h2>Quick Troubleshooting</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Issue</th>
+                    <th>Most likely cause</th>
+                    <th>Fix</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Site opens but DB fails</td>
+                    <td>Wrong Apache `SetEnv` DB values</td>
+                    <td>Recheck `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS` and reload Apache</td>
+                </tr>
+                <tr>
+                    <td>Email links go to localhost</td>
+                    <td>`APP_URL` still wrong</td>
+                    <td>Set it to the VM hostname or HTTPS hostname and reload Apache</td>
+                </tr>
+                <tr>
+                    <td>Emails do not send</td>
+                    <td>Wrong Gmail app password or SMTP values</td>
+                    <td>Verify `MAIL_*` settings and use a Google App Password, not your normal password</td>
+                </tr>
+                <tr>
+                    <td>Receipts fail</td>
+                    <td>Temp directory or permissions issue</td>
+                    <td>Check `/var/www/toolshare/tmp` and ownership for `www-data`</td>
+                </tr>
+                <tr>
+                    <td>Uploads fail</td>
+                    <td>Folder permission issue</td>
+                    <td>Recheck `/var/www/toolshare/uploads` ownership and mode</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            Sources: Azure Linux VM quickstart, Azure Linux VM pricing page, Azure Managed Disks pricing page, Azure IP pricing page, Azure bandwidth pricing page, and Azure MySQL Flexible Server capacity guidance. Public pricing can change, so verify cost in the Azure Portal before clicking Create.
+        </div>
+    </div>
+</body>
+</html>
